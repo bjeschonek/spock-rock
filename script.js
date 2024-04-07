@@ -15,6 +15,7 @@ const dom = {
     computerScissors: document.getElementById('computerScissors'),
     computerLizard: document.getElementById('computerLizard'),
     computerSpock: document.getElementById('computerSpock'),
+    resultText: document.getElementById('result-text'),
     allGameIcons: document.querySelectorAll('.far')
 };
 
@@ -26,12 +27,25 @@ const choices = {
     spock: { name: 'Spock', defeats: ['scissors', 'rock'] }
 };
 
+let playerScoreNumber = 0;
+let computerScoreNumber = 0;
 let computerChoice = '';
 
 function resetSelected() {
     dom.allGameIcons.forEach((icon) => {
         icon.classList.remove('selected');
     });
+}
+
+function resetAll() {
+    playerScoreNumber = 0;
+    computerScoreNumber = 0;
+    dom.playerScore.textContent = playerScoreNumber;
+    dom.computerScore.textContent = computerScoreNumber;
+    dom.playerChoice.textContent = '';
+    dom.computerChoice.textContent = '';
+    dom.resultText.textContent = '';
+    resetSelected();
 }
 
 function computerRandomChoice() {
@@ -76,14 +90,32 @@ function displayComputerChoice() {
     }
 }
 
-function checkResult() {
+function updateScore(playerChoice) {
+    if (playerChoice === computerChoice) {
+        dom.resultText.textContent = "It's a tie!";
+    } else {
+        const choice = choices[playerChoice];
+        if (choice.defeats.indexOf(computerChoice) > -1) {
+            dom.resultText.textContent = "You Won!";
+            playerScoreNumber++;
+            dom.playerScore.textContent = playerScoreNumber;
+        } else {
+            dom.resultText.textContent = "You Lost!";
+            computerScoreNumber++;
+            dom.computerScore.textContent = computerScoreNumber;
+        }
+    }
+}
+
+function checkResult(playerChoice) {
     resetSelected();
     computerRandomChoice();
     displayComputerChoice();
+    updateScore(playerChoice);
 }
 
 function select(playerChoice) {
-    checkResult();
+    checkResult(playerChoice);
     switch (playerChoice) {
         case 'rock':
             dom.playerRock.classList.add('selected');
@@ -109,3 +141,5 @@ function select(playerChoice) {
             break;
     }
 }
+
+resetAll();
